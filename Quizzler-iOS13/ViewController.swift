@@ -45,18 +45,28 @@ class ViewController: UIViewController {
         let actualAnswer = actualQuestion.answer
         
         if userAnswer == actualAnswer {
-            print("Right!")
+            sender.backgroundColor = UIColor.green
         } else {
-            print("Wrong")
+            sender.backgroundColor = UIColor.red
         }
         
         questionNumber = (questionNumber + 1) % quiz.count
-        updateUI()
+       
+        
+        Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { (_) in
+            self.updateUI()
+        }
+       
         
     }
     
     fileprivate func updateUI() {
-        questionText.text = quiz[questionNumber].text
+        DispatchQueue.main.async {
+            self.progressBar.progress = Float(self.questionNumber+1) / Float(self.quiz.count)
+            self.questionText.text = self.quiz[self.questionNumber].text
+            self.trueButton.backgroundColor = UIColor.clear
+            self.falseButton.backgroundColor = UIColor.clear
+        }
     }
     
 }
