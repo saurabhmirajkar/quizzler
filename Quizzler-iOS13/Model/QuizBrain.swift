@@ -1,19 +1,14 @@
 //
-//  ViewController.swift
+//  QuizBrain.swift
 //  Quizzler-iOS13
 //
-//  Created by Angela Yu on 12/07/2019.
-//  Copyright © 2019 The App Brewery. All rights reserved.
+//  Created by Saurabh Mirajkar on 08/02/23.
+//  Copyright © 2023 The App Brewery. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
-class ViewController: UIViewController {
-    
-    @IBOutlet weak var questionText: UILabel!
-    @IBOutlet weak var trueButton: UIButton!
-    @IBOutlet weak var falseButton: UIButton!
-    @IBOutlet weak var progressBar: UIProgressView!
+struct QuizBrain {
     
     let quiz : [Question] = [
         Question(q: "A slug's blood is green.", a: "True"),
@@ -32,42 +27,33 @@ class ViewController: UIViewController {
     ]
     
     var questionNumber = 0
+    var score : Int = 0
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        updateUI()
-    }
-    
-    @IBAction func answerButtonTapped(_ sender: UIButton) {
-        
-        let userAnswer = sender.currentTitle!
-        let actualQuestion = quiz[questionNumber]
-        let actualAnswer = actualQuestion.answer
-        
-        if userAnswer == actualAnswer {
-            sender.backgroundColor = UIColor.green
+    mutating func checkAnswer(_ userAnswer: String) -> Bool {
+        if userAnswer == quiz[questionNumber].answer {
+            score += 1
+            return true
         } else {
-            sender.backgroundColor = UIColor.red
+            return false
         }
-        
+    }
+    
+    func getQuestionText() -> String {
+        quiz[questionNumber].text
+    }
+    
+    func getProgress() -> Float {
+        Float(questionNumber+1) / Float(quiz.count)
+    }
+    
+    mutating func nextQuestion() {
         questionNumber = (questionNumber + 1) % quiz.count
-       
-        
-        Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { (_) in
-            self.updateUI()
-        }
-       
-        
-    }
-    
-    fileprivate func updateUI() {
-        DispatchQueue.main.async {
-            self.progressBar.progress = Float(self.questionNumber+1) / Float(self.quiz.count)
-            self.questionText.text = self.quiz[self.questionNumber].text
-            self.trueButton.backgroundColor = UIColor.clear
-            self.falseButton.backgroundColor = UIColor.clear
+        if questionNumber == 0 {
+            score = 0
         }
     }
     
+    func getScore() -> Int {
+        return score
+    }
 }
-
